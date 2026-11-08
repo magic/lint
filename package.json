@@ -1,0 +1,75 @@
+{
+  "name": "@magic/lint",
+  "version": "0.0.1-alpha.0",
+  "description": "lints your code using oxlint.",
+  "homepage": "https://magic.github.io/lint",
+  "bugs": {
+    "url": "https://github.com/magic/lint/issues"
+  },
+  "license": "AGPL-3.0",
+  "author": "Wizards & Witches",
+  "contributors": [
+    {
+      "name": "jascha ehrenreich",
+      "github": "jaeh"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magic/lint.git"
+  },
+  "bin": {
+    "lint": "src/bin.js",
+    "l": "src/bin.js"
+  },
+  "files": [
+    "src",
+    "types"
+  ],
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./bin": "./src/bin.js",
+    "./types": "./types/",
+    "./config": {
+      "types": "./types/oxlint.config.d.ts",
+      "default": "./src/oxlint.config.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc && npm run format",
+    "dev": "magic dev",
+    "build:docs": "magic build",
+    "tsc": "tsc --noEmit",
+    "test": "t",
+    "lint": "oxlint",
+    "format": "npm run format:check -- -w",
+    "format:check": "f -e docs",
+    "check": "npm run tsc && npm run lint"
+  },
+  "dependencies": {
+    "@magic/cli": "0.0.55",
+    "@magic/log": "0.1.23",
+    "oxlint": "1.92.0"
+  },
+  "devDependencies": {
+    "@magic-modules/light-switch": "0.0.12",
+    "@magic-modules/no-spy": "0.0.9",
+    "@magic-modules/pre": "0.0.12",
+    "@magic-themes/docs": "0.0.15",
+    "@magic/core": "0.0.161",
+    "@magic/format": "0.0.75",
+    "@magic/test": "0.3.51",
+    "@types/node": "26.6.6",
+    "typescript": "npm:@typescript/typescript6"
+  },
+  "engines": {
+    "node": ">=14.15.4"
+  },
+  "engineStrict": true,
+  "allowScripts": {
+    "canvas@3.2.3": true,
+    "@swc/core@1.15.47": true
+  }
+}
