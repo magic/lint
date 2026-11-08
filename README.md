@@ -121,6 +121,27 @@ so no extra wiring is needed.
 
 The shared config enables correctness rules as errors:
 
+##### <a name="ignore-patterns-note"></a>⚠️ note on ignorePatterns
+
+When using the shared config, **local `ignorePatterns` in your project's `oxlint.config.ts` do not work** as expected. This is a limitation of how oxlint merges extended configs — ignorePatterns from the base config take precedence, and local patterns are ignored.
+
+**Workaround:** create an `oxlint.config.ts` in your project root that imports and re-exports the shared config directly (instead of using `extends`):
+
+```ts
+// oxlint.config.ts
+import config from '@magic/lint/config'
+
+export default config
+```
+
+Then add your `ignorePatterns` (and any rule overrides) to this file. Since it's a direct re-export, you have full control over the config object.
+
+---
+
+##### <a name="shared config rules"></a>shared config rules
+
+The shared config enables correctness rules as errors:
+
 - **core**: `no-unused-vars`, `no-debugger`, `no-cond-assign`, `no-constant-condition`, `no-empty`, `no-unreachable`, `no-unsafe-negation`, `no-unsafe-optional-chaining`, `constructor-super`, `getter-return`, `no-class-assign`, `no-const-assign`, `no-dupe-class-members`, `no-dupe-keys`, `no-func-assign`, `no-import-assign`, `no-new-native-nonconstructor`, `no-obj-calls`, `no-redeclare`, `no-setter-return`, `no-this-before-super`, `no-unsafe-finally`, `preserve-caught-error`, `require-yield`, `use-isnan`, `valid-typeof`, `no-array-constructor`, `no-unused-expressions`, `curly`, and more
 - **typescript**: `ban-ts-comment`, `no-duplicate-enum-values`, `no-empty-object-type`, `no-explicit-any`, `no-extra-non-null-assertion`, `no-misused-new`, `no-namespace`, `no-non-null-asserted-optional-chain`, `no-require-imports`, `no-this-alias`, `no-unnecessary-type-constraint`, `no-unsafe-declaration-merging`, `no-unsafe-function-type`, `no-wrapper-object-types`, `prefer-as-const`, `prefer-namespace-keyword`, `triple-slash-reference`
 - **overrides for TS files**: disables rules that TS compiler already enforces, adds `no-var`, `prefer-const`, `prefer-rest-params`, `prefer-spread` as errors
