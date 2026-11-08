@@ -1,3 +1,3 @@
-import config from './src/oxlint.config.ts'
+import config from './src/oxlint.config.js'
 
 export default config
