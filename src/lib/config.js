@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url'
 export const sharedConfigPath = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   '..',
-  'oxlint.config.ts',
+  'oxlint.config.js',
 )
 
 /**
@@ -38,6 +38,14 @@ export const resolveConfig = (args = {}, cwd = process.cwd()) => {
 
   if (existsSync(consumerConfig)) {
     return consumerConfig
+  }
+
+  // Also check for consumer config in the package's own src/ directory
+  // This ensures that when running from the repo root, the package's config is used
+  const packageConfig = path.join(cwd, 'src', consumerConfigName)
+
+  if (existsSync(packageConfig)) {
+    return packageConfig
   }
 
   return sharedConfigPath
