@@ -19,8 +19,8 @@
     "url": "git+https://github.com/magic/lint.git"
   },
   "bin": {
-    "lint": "src/bin.js",
-    "l": "src/bin.js"
+    "l": "src/bin.js",
+    "lint": "src/bin.js"
   },
   "files": [
     "src",
