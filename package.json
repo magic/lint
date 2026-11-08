@@ -34,7 +34,7 @@
     "./types": "./types/",
     "./config": {
       "types": "./types/oxlint.config.d.ts",
-      "default": "./src/oxlint.config.ts"
+      "default": "./src/oxlint.config.js"
     }
   },
   "scripts": {
@@ -43,7 +43,8 @@
     "build:docs": "magic build",
     "tsc": "tsc --noEmit",
     "test": "t",
-    "lint": "oxlint",
+    "lint": "./src/bin.js",
+    "lint:fix": "./src/bin.js --fix",
     "format": "npm run format:check -- -w",
     "format:check": "f -e docs",
     "check": "npm run tsc && npm run lint"
