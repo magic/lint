@@ -18,9 +18,9 @@ run oxlint and lint your code.
   - [cli](#usage-cli)
   - [configuration](#usage-config)
     - [config resolution order](#config-resolution-order)
-    - [extending the shared config](#usage-extend)
+    - [using the shared config](#usage-shared-config)
+    - [extending the shared config](#usage-extend-config)
     - [environment variables](#environment-variables)
-  - [javascript api](#usage-js)
   - [exit codes](#usage-exit-codes)
 - [package exports](#package-exports)
 - [license](#license)
@@ -67,12 +67,8 @@ and exit code.
 
 #### <a name="usage-config"></a>configuration
 
-by default, the config shared by @magic/lint is used
-(`src/oxlint.config.ts` of this package).
-
-if your project has an `oxlint.config.ts` in its root
-(`process.cwd()`), it is used instead, so you can tailor the rules
-to your codebase.
+your project must have an `oxlint.config.ts` in its root
+(`process.cwd()`), allowing you to tailor the rules to your codebase.
 
 a different config can be given explicitly with `--config`.
 
@@ -96,7 +92,7 @@ this means you can:
 | ----------------------- | -------------------------------------------------------------- |
 | `MAGIC_LINT_OXLINT_BIN` | override the oxlint binary path (for testing or custom builds) |
 
-##### <a name="usage-extend"></a>extending the shared config
+##### <a name="usage-shared-config"></a>shared config
 
 To customize the shared config, you must **import and re-export** it from your own `oxlint.config.ts`. This is **mandatory** for oxlint to find and apply the correct rules to your files:
 
@@ -107,7 +103,7 @@ import config from '@magic/lint/config'
 export default config
 ```
 
-Without this import/export, oxlint will not pick up your custom configuration and will not find the files correctly. Your project's `oxlint.config.ts` is picked up automatically by `lint` once you re-export the shared config, so no extra wiring is needed.
+Without this import/export, oxlint will not pick up your custom configuration and will not find the files correctly. Your project's `oxlint.config.ts` is picked up automatically by the shared config once you re-export it, so no extra wiring is needed.
 
 ##### shared config rules
 
@@ -123,7 +119,10 @@ When using the shared config, **local `ignorePatterns` in your project's `oxlint
 // oxlint.config.ts
 import config from '@magic/lint/config'
 
-export default config
+export default {
+  ...config,
+  ignorePatterns: [...config.ignorePatterns, 'src/custom/ignore'],
+}
 ```
 
 Then add your `ignorePatterns` (and any rule overrides) to this file. Since it's a direct re-export, you have full control over the config object.
@@ -140,29 +139,10 @@ The shared config enables correctness rules as errors:
 
 See [`src/oxlint.config.ts`](src/oxlint.config.ts) for the full rule set.
 
-#### <a name="usage-js"></a>javascript api
-
-```js
-import { lint } from '@magic/lint'
-
-const { code, stdout, stderr } = await lint({
-  // paths to lint. defaults to process.cwd()
-  paths: ['src'],
-  // path to a custom config file.
-  // defaults to process.cwd()/oxlint.config.ts, or the shared config
-  config: 'oxlint.config.ts',
-  // fix as many issues as possible
-  fix: false,
-  // working directory. defaults to process.cwd()
-  cwd: process.cwd(),
-})
-```
-
 **named exports** (for advanced use):
 
 ```js
 import {
-  lint,
   resolveConfig, // resolve config path given args + cwd
   getOxlintBin, // get the oxlint binary path
   runOxlint, // run oxlint with raw args
@@ -171,17 +151,6 @@ import {
   config, // content of oxlint.config.ts
 } from '@magic/lint'
 ```
-
-##### `lint(args)`
-
-main entry point. returns `{ code, stdout, stderr }`.
-
-| arg      | type               | default         | description          |
-| -------- | ------------------ | --------------- | -------------------- |
-| `paths`  | `string\|string[]` | `[cwd]`         | files/dirs to lint   |
-| `config` | `string`           | auto-resolved   | explicit config file |
-| `fix`    | `boolean`          | `false`         | auto-fix issues      |
-| `cwd`    | `string`           | `process.cwd()` | working directory    |
 
 ##### `resolveConfig(args, cwd)`
 
@@ -214,12 +183,12 @@ reexport of oxlint.config.js
 
 #### <a name="package-exports"></a>package exports
 
-| specifier            | provides                                                                                                                                                    |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@magic/lint`        | default: `lint`; named: `lint`, `resolveConfig`, `getOxlintBin`, `runOxlint`, `sharedConfigPath`, `consumerConfigName`                                      |
-| `@magic/lint/bin`    | CLI entry point                                                                                                                                             |
-| `@magic/lint/config` | the shared oxlint config (TS module, import and re-export it from your `oxlint.config.ts`) — **mandatory** for oxlint to find and apply rules to your files |     |
-| `@magic/lint/types`  | TypeScript declarations                                                                                                                                     |
+| specifier            | provides                                                                                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@magic/lint`        | named: `resolveConfig`, `getOxlintBin`, `runOxlint`, `sharedConfigPath`, `consumerConfigName`, `config` (shared config object)                   |
+| `@magic/lint/bin`    | CLI entry point (`src/bin.js`)                                                                                                                   |
+| `@magic/lint/config` | the shared oxlint config (import and re-export it from your `oxlint.config.ts`) — **mandatory** for oxlint to find and apply rules to your files |
+| `@magic/lint/types`  | TypeScript declarations                                                                                                                          |
 
 #### <a name="license"></a>license
 

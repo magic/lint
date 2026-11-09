@@ -97,51 +97,48 @@ export default config`),
 
   h2({ id: 'usage-js' }, 'javascript api'),
 
-  Pre(`
-import { lint } from '@magic/lint'
-
-const { code, stdout, stderr } = await lint({
-  // paths to lint. defaults to process.cwd()
-  paths: ['src'],
-  // path to a custom config file.
-  // defaults to process.cwd()/oxlint.config.ts, or the shared config
-  config: 'oxlint.config.ts',
-  // fix as many issues as possible
-  fix: false,
-  // working directory. defaults to process.cwd()
-  cwd: process.cwd(),
-})`),
-
-  p('named exports (for advanced use):'),
+  p('the javascript api provides low-level utilities for running oxlint programmatically:'),
 
   Pre(`
 import {
-  lint,
   resolveConfig,      // resolve config path given args + cwd
   getOxlintBin,       // get the oxlint binary path
   runOxlint,          // run oxlint with raw args
   sharedConfigPath,   // path to the shared config
   consumerConfigName, // 'oxlint.config.ts'
-  config,             // reexport of oxlint.config.ts
+  config,             // the shared oxlint config object
 } from '@magic/lint'`),
 
-  h3({ id: 'lint-args' }, 'lint(args)'),
+  h3({ id: 'runoxlint' }, 'runOxlint(oxlintArgs, cwd)'),
 
-  p('main entry point. returns an object with `code`, `stdout`, and `stderr` properties.'),
+  p('low-level: spawns oxlint with the given argv array. returns { code, stdout, stderr }.'),
 
-  ul([
-    li([strong('paths'), ': string | string[] — default [cwd] — files/dirs to lint']),
-    li([strong('config'), ': string — default auto-resolved — explicit config file']),
-    li([strong('fix'), ': boolean — default false — auto-fix issues']),
-    li([strong('cwd'), ': string — default process.cwd() — working directory']),
-  ]),
+  h3({ id: 'resolveconfig' }, 'resolveConfig(args, cwd)'),
+
+  p('resolves the config file path per the resolution order above.'),
+
+  h3({ id: 'getoxlintbin' }, 'getOxlintBin()'),
+
+  p('returns the path to the oxlint binary. respects MAGIC_LINT_OXLINT_BIN.'),
+
+  h3({ id: 'sharedconfigpath' }, 'sharedConfigPath'),
+
+  p("absolute path to this package's src/oxlint.config.js."),
+
+  h3({ id: 'consumerconfigname' }, 'consumerConfigName'),
+
+  p("string 'oxlint.config.ts' — the filename checked in the consumer project."),
+
+  h3({ id: 'config' }, 'config'),
+
+  p('the shared oxlint config object (default export of oxlint.config.js).'),
 
   h2({ id: 'exports' }, 'package exports'),
 
   ul([
     li([
       strong('@magic/lint'),
-      ' — default: lint; named: lint, resolveConfig, getOxlintBin, runOxlint, sharedConfigPath, consumerConfigName',
+      ' — named: resolveConfig, getOxlintBin, runOxlint, sharedConfigPath, consumerConfigName, config',
     ]),
     li([strong('@magic/lint/bin'), ' — CLI entry point']),
     li([
