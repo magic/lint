@@ -52,8 +52,8 @@ export default [
   },
   {
     fn: () => consumerConfigName,
-    expect: 'oxlint.config.js',
-    info: 'consumerConfigName is oxlint.config.js',
+    expect: 'oxlint.config.ts',
+    info: 'consumerConfigName is oxlint.config.ts',
   },
   {
     fn: () => resolveConfig({ config: 'my.config.ts' }, '/project'),
@@ -68,16 +68,16 @@ export default [
   {
     fn: () => {
       const dir = fixtureDir('resolve-consumer')
-      createFixture(dir, { 'oxlint.config.js': 'export default { rules: {} }' })
+      createFixture(dir, { 'oxlint.config.ts': 'export default { rules: {} }' })
       try {
         const resolved = resolveConfig({}, dir)
-        return resolved === path.join(dir, 'oxlint.config.js')
+        return resolved === path.join(dir, 'oxlint.config.ts')
       } finally {
         rmSync(dir, { recursive: true, force: true })
       }
     },
     expect: true,
-    info: 'resolveConfig prefers the consumer oxlint.config.js when it exists',
+    info: 'resolveConfig prefers the consumer oxlint.config.ts when it exists',
   },
   {
     fn: () => {
@@ -141,17 +141,18 @@ export default [
     fn: async () => {
       const dir = fixtureDir('consumer-config')
       createFixture(dir, {
-        'oxlint.config.js': "export default { rules: { 'no-unused-vars': 'off' } }",
+        'oxlint.config.ts': "export default { rules: { 'no-unused-vars': 'off' } }",
         'a.js': 'const a = 1\n',
       })
       try {
-        return (await lint({ cwd: dir })).code
+        const result = await lint({ cwd: dir })
+        return result.code
       } finally {
         rmSync(dir, { recursive: true, force: true })
       }
     },
     expect: 0,
-    info: 'lint uses the consumer oxlint.config.js over the shared config',
+    info: 'lint uses the consumer oxlint.config.ts over the shared config',
   },
   {
     fn: async () => {

@@ -80,7 +80,7 @@ export default [
     fn: async () => {
       const dir = fixtureDir('consumer-config')
       createFixture(dir, {
-        'oxlint.config.js': "export default { rules: { 'no-unused-vars': 'off' } }",
+        'oxlint.config.ts': "export default { rules: { 'no-unused-vars': 'off' } }",
         'a.js': 'const a = 1\n',
       })
       try {
@@ -91,7 +91,7 @@ export default [
       }
     },
     expect: 0,
-    info: 'integration: lint uses the consumer oxlint.config.js over the shared config',
+    info: 'integration: lint uses the consumer oxlint.config.ts over the shared config',
   },
   {
     fn: async () => {
@@ -142,7 +142,7 @@ export default [
     fn: async () => {
       const dir = fixtureDir('extends')
       createFixture(dir, {
-        'oxlint.config.js':
+        'oxlint.config.ts':
           "import shared from '@magic/lint/config'\nexport default { extends: [shared] }\n",
         'a.js': 'const a = 1\n',
       })
