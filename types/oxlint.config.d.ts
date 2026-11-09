@@ -1,14 +1,14 @@
-declare const _default: {
-  $schema: string
-  plugins: 'typescript'[]
-  categories: {
-    correctness: 'error'
+declare namespace _default {
+  let $schema: string
+  let plugins: 'typescript'[]
+  namespace categories {
+    let correctness: 'error'
   }
-  env: {
-    builtin: true
+  namespace env {
+    let builtin: true
   }
-  ignorePatterns: string[]
-  rules: {
+  let ignorePatterns: string[]
+  let rules: {
     'constructor-super': 'error'
     'for-direction': 'error'
     'getter-return': 'error'
@@ -101,7 +101,7 @@ declare const _default: {
     'typescript/prefer-namespace-keyword': 'error'
     'typescript/triple-slash-reference': 'error'
   }
-  overrides: {
+  let overrides: {
     files: string[]
     rules: {
       'constructor-super': 'off'
