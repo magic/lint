@@ -98,24 +98,16 @@ this means you can:
 
 ##### <a name="usage-extend"></a>extending the shared config
 
-instead of replacing the shared config, extend it from your own
-`oxlint.config.ts`. import the shared config via the `/config` export:
+To customize the shared config, you must **import and re-export** it from your own `oxlint.config.ts`. This is **mandatory** for oxlint to find and apply the correct rules to your files:
 
 ```ts
 // oxlint.config.ts
-import shared from '@magic/lint/config'
+import config from '@magic/lint/config'
 
-export default {
-  extends: [shared],
-  // your overrides, e.g. relax or add rules
-  rules: {
-    'no-unused-vars': 'off',
-  },
-}
+export default config
 ```
 
-your project's `oxlint.config.ts` is picked up automatically by `lint`,
-so no extra wiring is needed.
+Without this import/export, oxlint will not pick up your custom configuration and will not find the files correctly. Your project's `oxlint.config.ts` is picked up automatically by `lint` once you re-export the shared config, so no extra wiring is needed.
 
 ##### shared config rules
 
@@ -221,7 +213,7 @@ string `'oxlint.config.ts'` — the filename checked in the consumer project.
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `@magic/lint`        | default: `lint`; named: `lint`, `resolveConfig`, `getOxlintBin`, `runOxlint`, `sharedConfigPath`, `consumerConfigName` |
 | `@magic/lint/bin`    | CLI entry point                                                                                                        |
-| `@magic/lint/config` | the shared oxlint config (TS module, for `extends: [shared]`)                                                          |
+| `@magic/lint/config` | the shared oxlint config (TS module, import and re-export it from your `oxlint.config.ts`) — **mandatory** for oxlint to find and apply rules to your files |                              |
 | `@magic/lint/types`  | TypeScript declarations                                                                                                |
 
 #### <a name="license"></a>license

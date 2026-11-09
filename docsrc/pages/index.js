@@ -73,23 +73,17 @@ lint -v          - echo the oxlint command
   h3({ id: 'config-extend' }, 'extending the shared config'),
 
   p(
-    'instead of replacing the shared config, extend it from your own oxlint.config.ts. import the shared config via the /config export:',
+    'instead of replacing the shared config, extend it from your own oxlint.config.ts. import the shared config via the /config export and re-export it. this is **mandatory** for oxlint to find and apply the correct rules to your files:',
   ),
 
   Pre(`
 // oxlint.config.ts
-import shared from '@magic/lint/config'
+import config from '@magic/lint/config'
 
-export default {
-  extends: [shared],
-  // your overrides, e.g. relax or add rules
-  rules: {
-    'no-unused-vars': 'off',
-  },
-}`),
+export default config`),
 
   p(
-    'your project oxlint.config.ts is picked up automatically by lint, so no extra wiring is needed.',
+    'without this import/export, oxlint will not pick up your custom configuration and will not find the files correctly. your project oxlint.config.ts is picked up automatically by lint once you re-export the shared config, so no extra wiring is needed.',
   ),
 
   h3({ id: 'environment-variables' }, 'environment variables'),
@@ -151,7 +145,7 @@ import {
     li([strong('@magic/lint/bin'), ' — CLI entry point']),
     li([
       strong('@magic/lint/config'),
-      ' — the shared oxlint config (TS module, for extends: [shared])',
+      ' — the shared oxlint config (TS module, import and re-export it from your oxlint.config.ts) — **mandatory** for oxlint to find and apply rules to your files',
     ]),
     li([strong('@magic/lint/types'), ' — TypeScript declarations']),
   ]),
