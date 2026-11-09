@@ -42,12 +42,13 @@
     "dev": "magic dev",
     "build:docs": "magic build",
     "tsc": "tsc --noEmit",
+    "tsc:test": "tsc --noEmit -p tsconfig.test.json",
     "test": "t",
     "lint": "./src/bin.js",
     "lint:fix": "./src/bin.js --fix",
     "format": "npm run format:check -- -w",
     "format:check": "f -e docs",
-    "check": "npm run tsc && npm run lint"
+    "check": "npm run tsc && npm run tsc:test && npm run lint"
   },
   "dependencies": {
     "@magic/cli": "0.0.55",

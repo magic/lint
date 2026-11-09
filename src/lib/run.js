@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import { createRequire } from 'node:module'
+import is from '@magic/types'
 
 const require = createRequire(import.meta.url)
 
@@ -15,17 +16,29 @@ export const getOxlintBin = () =>
 
 /**
  * Builds the oxlint cli argument list from parsed arguments
- * @param {{configFile?: string, paths?: string[], fix?: boolean}} params
+ * @param {{configFile?: string, paths?: string[], args: Record<string, string | string[]>}} params
  * @returns {string[]}
  */
-export const buildOxlintArgs = ({ configFile, paths = [], fix } = {}) => {
-  const oxlintArgs = ['-c', configFile]
+export const buildOxlintArgs = ({ configFile, args = {} } = { args: {} }) => {
+  const oxlintArgs = []
 
-  if (fix) {
+  if (is.arr(args.exclude)) {
+    args.exclude.forEach(arg => {
+      oxlintArgs.push('--ignore-path', arg)
+    })
+  }
+
+  if (args.fix) {
     oxlintArgs.push('--fix')
   }
 
-  oxlintArgs.push(...paths)
+  oxlintArgs.push('-c', configFile)
+
+  if (is.arr(args.include)) {
+    args.include.forEach(arg => {
+      oxlintArgs.push(arg)
+    })
+  }
 
   return oxlintArgs
 }
