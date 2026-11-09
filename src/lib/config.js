@@ -40,13 +40,5 @@ export const resolveConfig = (args = {}, cwd = process.cwd()) => {
     return consumerConfig
   }
 
-  // Also check for consumer config in the package's own src/ directory
-  // This ensures that when running from the repo root, the package's config is used
-  const packageConfig = path.join(cwd, 'src', consumerConfigName)
-
-  if (existsSync(packageConfig)) {
-    return packageConfig
-  }
-
   return sharedConfigPath
 }
