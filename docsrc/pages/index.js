@@ -122,6 +122,7 @@ import {
   runOxlint,          // run oxlint with raw args
   sharedConfigPath,   // path to the shared config
   consumerConfigName, // 'oxlint.config.ts'
+  config,             // reexport of oxlint.config.ts
 } from '@magic/lint'`),
 
   h3({ id: 'lint-args' }, 'lint(args)'),

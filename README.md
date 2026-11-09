@@ -168,6 +168,7 @@ import {
   runOxlint, // run oxlint with raw args
   sharedConfigPath, // path to the shared config
   consumerConfigName, // 'oxlint.config.ts'
+  config, // content of oxlint.config.ts
 } from '@magic/lint'
 ```
 
@@ -202,6 +203,10 @@ absolute path to this package's `src/oxlint.config.ts`.
 
 string `'oxlint.config.ts'` — the filename checked in the consumer project.
 
+##### `config`
+
+reexport of oxlint.config.js
+
 #### <a name="usage-exit-codes"></a>exit codes
 
 - `0` - no issues found
@@ -209,12 +214,12 @@ string `'oxlint.config.ts'` — the filename checked in the consumer project.
 
 #### <a name="package-exports"></a>package exports
 
-| specifier            | provides                                                                                                               |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `@magic/lint`        | default: `lint`; named: `lint`, `resolveConfig`, `getOxlintBin`, `runOxlint`, `sharedConfigPath`, `consumerConfigName` |
-| `@magic/lint/bin`    | CLI entry point                                                                                                        |
-| `@magic/lint/config` | the shared oxlint config (TS module, import and re-export it from your `oxlint.config.ts`) — **mandatory** for oxlint to find and apply rules to your files |                              |
-| `@magic/lint/types`  | TypeScript declarations                                                                                                |
+| specifier            | provides                                                                                                                                                    |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@magic/lint`        | default: `lint`; named: `lint`, `resolveConfig`, `getOxlintBin`, `runOxlint`, `sharedConfigPath`, `consumerConfigName`                                      |
+| `@magic/lint/bin`    | CLI entry point                                                                                                                                             |
+| `@magic/lint/config` | the shared oxlint config (TS module, import and re-export it from your `oxlint.config.ts`) — **mandatory** for oxlint to find and apply rules to your files |     |
+| `@magic/lint/types`  | TypeScript declarations                                                                                                                                     |
 
 #### <a name="license"></a>license
 
