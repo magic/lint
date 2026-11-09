@@ -1,5 +1,10 @@
 ### Changelog
 
+#### 0.0.4
+
+- export config from main package, `import { config } from '@magic/lint'`
+- update README and docs
+
 #### 0.0.3
 
 - update README
