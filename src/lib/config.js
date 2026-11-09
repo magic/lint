@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import fs from '@magic/fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -27,17 +27,18 @@ export const consumerConfigName = 'oxlint.config.ts'
  * otherwise the shared config is used.
  * @param {{config?: string}} [args]
  * @param {string} [cwd=process.cwd()]
- * @returns {string}
+ * @returns {Promise<string>}
  */
-export const resolveConfig = (args = {}, cwd = process.cwd()) => {
+export const resolveConfig = async (args = {}, cwd = process.cwd()) => {
   if (args.config) {
     return path.isAbsolute(args.config) ? args.config : path.join(cwd, args.config)
   }
 
-  const consumerConfig = path.join(cwd, consumerConfigName)
+  const consumerConfigPath = path.join(cwd, consumerConfigName)
+  const consumerConfigExists = await fs.exists(consumerConfigPath)
 
-  if (existsSync(consumerConfig)) {
-    return consumerConfig
+  if (consumerConfigExists) {
+    return consumerConfigPath
   }
 
   return sharedConfigPath
