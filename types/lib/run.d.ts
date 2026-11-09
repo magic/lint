@@ -1,12 +1,11 @@
 export function getOxlintBin(): string
 export function buildOxlintArgs({
   configFile,
-  paths,
-  fix,
+  args,
 }?: {
   configFile?: string
   paths?: string[]
-  fix?: boolean
+  args: Record<string, string | string[]>
 }): string[]
 export function runOxlint(
   oxlintArgs: string[],

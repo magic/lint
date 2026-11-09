@@ -15,4 +15,4 @@ export function resolveConfig(
     config?: string
   },
   cwd?: string,
-): string
+): Promise<string>
