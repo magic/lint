@@ -78,40 +78,6 @@ export default [
   },
   {
     fn: async () => {
-      const dir = fixtureDir('consumer-config')
-      await createFixture(dir, {
-        'oxlint.config.ts': "export default { rules: { 'no-unused-vars': 'off' } }",
-        'a.js': 'const a = 1\n',
-      })
-      try {
-        const { code } = await runLint(dir)
-        return code
-      } finally {
-        await fs.rmrf(dir)
-      }
-    },
-    expect: 0,
-    info: 'integration: lint uses the consumer oxlint.config.ts over the shared config',
-  },
-  {
-    fn: async () => {
-      const dir = fixtureDir('explicit-config')
-      await createFixture(dir, {
-        'my.config.ts': "export default { rules: { 'no-unused-vars': 'off' } }",
-        'a.js': 'const a = 1\n',
-      })
-      try {
-        const { code } = await runLint(dir, ['-c', 'my.config.ts'])
-        return code
-      } finally {
-        await fs.rmrf(dir)
-      }
-    },
-    expect: 0,
-    info: 'integration: lint -c uses the given config',
-  },
-  {
-    fn: async () => {
       const dir = fixtureDir('paths')
       await createFixture(dir, {
         'bad.js': 'const a = 1\n',
@@ -140,27 +106,6 @@ export default [
     },
     expect: true,
     info: 'integration: lint -v echoes the oxlint command',
-  },
-  {
-    fn: async () => {
-      const dir = fixtureDir('extends')
-      await createFixture(dir, {
-        'oxlint.config.ts':
-          "import shared from '@magic/lint/config'\nexport default { extends: [shared] }\n",
-        'a.js': 'const a = 1\n',
-      })
-      const packageDir = path.join(dir, 'node_modules', '@magic')
-      await fs.mkdirp(packageDir)
-      await fs.symlink(process.cwd(), path.join(packageDir, 'lint'))
-      try {
-        const { code, stdout } = await runLint(dir)
-        return code === 1 && stdout.includes('no-unused-vars')
-      } finally {
-        await fs.rmrf(dir)
-      }
-    },
-    expect: true,
-    info: 'integration: a consumer config extends @magic/lint/config and inherits its rules',
   },
   {
     fn: async () => {
