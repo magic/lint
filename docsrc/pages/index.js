@@ -51,16 +51,16 @@ lint -v          - echo the oxlint command
   p('the decision respects the standard env vars, in this order of precedence:'),
 
   ul([
-    li(strong('NO_COLOR') + ' (set and non-empty) — no colors, even in a TTY'),
-    li(strong('FORCE_COLOR') + ' (set, not 0) — colors, even when piped'),
+    li([strong('NO_COLOR'), ' (set and non-empty) — no colors, even in a TTY']),
+    li([strong('FORCE_COLOR'), ' (set, not 0) — colors, even when piped']),
     li("lint's stdout is a TTY — colors"),
-    li(strong('CI') + ' (set and non-empty) — colors, for CI logs'),
+    li([strong('CI'), ' (set and non-empty) — colors, for CI logs']),
     li('otherwise — no colors'),
   ]),
 
   h2({ id: 'config' }, 'configuration'),
 
-  p('by default, the config shared by @magic/lint is used (src/oxlint.config.ts of this package).'),
+  p('by default, the config shared by @magic/lint is used (src/oxlint.config.js of this package).'),
 
   p(
     'if your project has an oxlint.config.ts in its root (process.cwd()), it is used instead, so you can tailor the rules to your codebase.',
@@ -105,10 +105,10 @@ export default config`),
   h3({ id: 'environment-variables' }, 'environment variables'),
 
   ul([
-    li(
-      strong('MAGIC_LINT_OXLINT_BIN') +
-        ' — override the oxlint binary path (for testing or custom builds)',
-    ),
+    li([
+      strong('MAGIC_LINT_OXLINT_BIN'),
+      ' — override the oxlint binary path (for testing or custom builds)',
+    ]),
   ]),
 
   h2({ id: 'usage-js' }, 'javascript api'),
@@ -168,7 +168,7 @@ import {
     li([strong('@magic/lint/bin'), ' — CLI entry point']),
     li([
       strong('@magic/lint/config'),
-      ' — the shared oxlint config (TS module, import and re-export it from your oxlint.config.ts) — **mandatory** for oxlint to find and apply rules to your files',
+      ' — the shared oxlint config (JS module, import and re-export it from your oxlint.config.ts) — **mandatory** for oxlint to find and apply rules to your files',
     ]),
     li([strong('@magic/lint/types'), ' — TypeScript declarations']),
   ]),
