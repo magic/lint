@@ -16,11 +16,13 @@ run oxlint and lint your code.
 - [usage](#usage)
   - [npm scripts](#npm-scripts)
   - [cli](#usage-cli)
+  - [colors](#usage-colors)
   - [configuration](#usage-config)
     - [config resolution order](#config-resolution-order)
-    - [using the shared config](#usage-shared-config)
-    - [extending the shared config](#usage-extend-config)
     - [environment variables](#environment-variables)
+    - [shared config](#usage-shared-config)
+      - [ignorePatterns note](#ignore-patterns-note)
+      - [shared config rules](#shared-config-rules)
   - [exit codes](#usage-exit-codes)
 - [package exports](#package-exports)
 - [license](#license)
@@ -123,10 +125,6 @@ export default config
 
 Without this import/export, oxlint will not pick up your custom configuration and will not find the files correctly. Your project's `oxlint.config.ts` is picked up automatically by the shared config once you re-export it, so no extra wiring is needed.
 
-##### shared config rules
-
-The shared config enables correctness rules as errors:
-
 ##### <a name="ignore-patterns-note"></a>⚠️ note on ignorePatterns
 
 When using the shared config, **local `ignorePatterns` in your project's `oxlint.config.ts` do not work** as expected. This is a limitation of how oxlint merges extended configs — ignorePatterns from the base config take precedence, and local patterns are ignored.
@@ -145,17 +143,16 @@ export default {
 
 Then add your `ignorePatterns` (and any rule overrides) to this file. Since it's a direct re-export, you have full control over the config object.
 
----
-
-##### <a name="shared config rules"></a>shared config rules
+##### <a name="shared-config-rules"></a>shared config rules
 
 The shared config enables correctness rules as errors:
 
 - **core**: `no-unused-vars`, `no-debugger`, `no-cond-assign`, `no-constant-condition`, `no-empty`, `no-unreachable`, `no-unsafe-negation`, `no-unsafe-optional-chaining`, `constructor-super`, `getter-return`, `no-class-assign`, `no-const-assign`, `no-dupe-class-members`, `no-dupe-keys`, `no-func-assign`, `no-import-assign`, `no-new-native-nonconstructor`, `no-obj-calls`, `no-redeclare`, `no-setter-return`, `no-this-before-super`, `no-unsafe-finally`, `preserve-caught-error`, `require-yield`, `use-isnan`, `valid-typeof`, `no-array-constructor`, `no-unused-expressions`, `curly`, and more
 - **typescript**: `ban-ts-comment`, `no-duplicate-enum-values`, `no-empty-object-type`, `no-explicit-any`, `no-extra-non-null-assertion`, `no-misused-new`, `no-namespace`, `no-non-null-asserted-optional-chain`, `no-require-imports`, `no-this-alias`, `no-unnecessary-type-constraint`, `no-unsafe-declaration-merging`, `no-unsafe-function-type`, `no-wrapper-object-types`, `prefer-as-const`, `prefer-namespace-keyword`, `triple-slash-reference`
-- **overrides for TS files**: disables rules that TS compiler already enforces, adds `no-var`, `prefer-const`, `prefer-rest-params`, `prefer-spread` as errors
+- **style / misc**: `no-var`, `prefer-const`, `prefer-rest-params`, `prefer-spread` as errors
+- **overrides for TS files**: an (empty) override block for `*.ts`, `*.tsx`, `*.mts`, `*.cts` as a placeholder for per-file-type rules
 
-See [`src/oxlint.config.ts`](src/oxlint.config.ts) for the full rule set.
+See [`src/oxlint.config.js`](src/oxlint.config.js) for the full rule set.
 
 **named exports** (for advanced use):
 
@@ -193,7 +190,7 @@ and stdout.
 
 ##### `sharedConfigPath`
 
-absolute path to this package's `src/oxlint.config.ts`.
+absolute path to this package's `src/oxlint.config.js`.
 
 ##### `consumerConfigName`
 
