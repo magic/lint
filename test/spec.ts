@@ -3,6 +3,7 @@ import { version } from '@magic/test'
 import * as lib from '../src/index.js'
 
 const spec = {
+  colorEnv: 'function',
   resolveConfig: 'function',
   getOxlintBin: 'function',
   runOxlint: 'function',

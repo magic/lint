@@ -139,4 +139,55 @@ export default [
     expect: true,
     info: 'integration: bin writes the oxlint stderr to process.stderr',
   },
+  {
+    fn: async () => {
+      const dir = fixtureDir('color-off')
+      await createFixture(dir, { 'a.js': 'const a = 1\n' })
+      // a stand-in for oxlint that echoes the color env it received,
+      // injected via the MAGIC_LINT_OXLINT_BIN override
+      const fakeBin = path.join(dir, 'fake-oxlint.js')
+      await fs.writeFile(
+        fakeBin,
+        'process.stdout.write(JSON.stringify({ f: process.env.FORCE_COLOR, n: process.env.NO_COLOR, c: process.env.CI }))\nprocess.exit(0)\n',
+      )
+      try {
+        const { code, stdout } = await runLint(dir, [], {
+          // normalize any ambient color env so the result is deterministic
+          FORCE_COLOR: '',
+          NO_COLOR: '',
+          CI: '',
+          MAGIC_LINT_OXLINT_BIN: fakeBin,
+        })
+        return code === 0 && stdout === '{"n":"1"}'
+      } finally {
+        await fs.rmrf(dir)
+      }
+    },
+    expect: true,
+    info: 'integration: piped output without color env passes NO_COLOR=1 to oxlint',
+  },
+  {
+    fn: async () => {
+      const dir = fixtureDir('color-on')
+      await createFixture(dir, { 'a.js': 'const a = 1\n' })
+      const fakeBin = path.join(dir, 'fake-oxlint.js')
+      await fs.writeFile(
+        fakeBin,
+        'process.stdout.write(JSON.stringify({ f: process.env.FORCE_COLOR, n: process.env.NO_COLOR, c: process.env.CI }))\nprocess.exit(0)\n',
+      )
+      try {
+        const { code, stdout } = await runLint(dir, [], {
+          FORCE_COLOR: '1',
+          NO_COLOR: '',
+          CI: '',
+          MAGIC_LINT_OXLINT_BIN: fakeBin,
+        })
+        return code === 0 && stdout === '{"f":"1"}'
+      } finally {
+        await fs.rmrf(dir)
+      }
+    },
+    expect: true,
+    info: 'integration: explicit FORCE_COLOR is passed to oxlint as FORCE_COLOR=1',
+  },
 ]
