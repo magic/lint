@@ -57,24 +57,24 @@ export const buildOxlintArgs = ({ configFile, args = {} } = {}) => {
  * @returns {Record<string, string | undefined>} the env to pass to the oxlint child process
  */
 export const colorEnv = (env = process.env, isTTY = Boolean(process.stdout.isTTY)) => {
-  const child = { ...env }
+  const childEnv = { ...env }
 
-  const set = v => v !== undefined && v !== ''
+  const isSet = v => v !== undefined && v !== ''
   const color =
-    !set(child.NO_COLOR) &&
-    ((set(child.FORCE_COLOR) && child.FORCE_COLOR !== '0') || isTTY || set(child.CI))
+    !isSet(childEnv.NO_COLOR) &&
+    ((isSet(childEnv.FORCE_COLOR) && childEnv.FORCE_COLOR !== '0') || isTTY || isSet(childEnv.CI))
 
   if (color) {
-    child.FORCE_COLOR = '1'
-    delete child.NO_COLOR
-    delete child.CI
+    childEnv.FORCE_COLOR = '1'
+    delete childEnv.NO_COLOR
+    delete childEnv.CI
   } else {
-    delete child.FORCE_COLOR
-    delete child.CI
-    child.NO_COLOR = '1'
+    delete childEnv.FORCE_COLOR
+    delete childEnv.CI
+    childEnv.NO_COLOR = '1'
   }
 
-  return child
+  return childEnv
 }
 
 /**
