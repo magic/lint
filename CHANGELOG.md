@@ -1,5 +1,12 @@
 ### Changelog
 
+#### 0.0.5
+
+- preserve oxlint colors when piping: pass the color decision (based on
+  lint's own stdout and NO_COLOR / FORCE_COLOR / CI) to oxlint via env,
+  since oxlint only colors when its own stdout is a TTY
+- export `colorEnv` from the main package
+
 #### 0.0.4
 
 - export config from main package, `import { config } from '@magic/lint'`
