@@ -4,8 +4,7 @@ export function buildOxlintArgs({
   args,
 }?: {
   configFile?: string
-  paths?: string[]
-  args: Record<string, string | string[]>
+  args?: Record<string, string | string[]>
 }): string[]
 export function colorEnv(
   env?: Record<string, string | undefined>,
