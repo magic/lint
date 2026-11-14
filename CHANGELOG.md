@@ -6,6 +6,7 @@
   lint's own stdout and NO_COLOR / FORCE_COLOR / CI) to oxlint via env,
   since oxlint only colors when its own stdout is a TTY
 - export `colorEnv` from the main package
+- update dependencies
 
 #### 0.0.4
 
