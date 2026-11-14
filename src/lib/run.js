@@ -24,7 +24,7 @@ export const buildOxlintArgs = ({ configFile, paths, args = {} } = {}) => {
 
   if (is.arr(args.exclude)) {
     args.exclude.forEach(arg => {
-      oxlintArgs.push('--ignore-path', arg)
+      oxlintArgs.push('--ignore-pattern', arg)
     })
   }
 

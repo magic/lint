@@ -169,6 +169,23 @@ export default [
   },
   {
     fn: async () => {
+      const dir = fixtureDir('exclude')
+      await createFixture(dir, {
+        'bad.js': 'const a = 1\n',
+        'b.test.js': 'const c = 3\n',
+      })
+      try {
+        const { code, stdout } = await runLint(dir, ['--exclude', 'b.test.js'])
+        return code === 1 && stdout.includes('bad.js') && !stdout.includes('b.test.js')
+      } finally {
+        await fs.rmrf(dir)
+      }
+    },
+    expect: true,
+    info: 'integration: lint --exclude excludes matching files from linting',
+  },
+  {
+    fn: async () => {
       const dir = fixtureDir('stderr')
       await createFixture(dir, { 'a.js': 'const a = 1\nconsole.log(a)\n' })
       // a stand-in for oxlint that writes to stderr and exits 1,

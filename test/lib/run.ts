@@ -10,8 +10,15 @@ export default [
           exclude: ['*.test.ts', '*.spec.ts'],
         },
       }),
-    expect: ['--ignore-path', '*.test.ts', '--ignore-path', '*.spec.ts', '-c', 'oxlint.config.js'],
-    info: 'buildOxlintArgs includes --ignore-path for each exclude pattern',
+    expect: [
+      '--ignore-pattern',
+      '*.test.ts',
+      '--ignore-pattern',
+      '*.spec.ts',
+      '-c',
+      'oxlint.config.js',
+    ],
+    info: 'buildOxlintArgs includes --ignore-pattern for each exclude pattern',
   },
 
   // Test run.js lines 32-33: args.fix branch
