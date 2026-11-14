@@ -37,6 +37,17 @@ export default [
     info: 'buildOxlintArgs includes include paths after config',
   },
 
+  // Test run.js: paths branch
+  {
+    fn: () =>
+      buildOxlintArgs({
+        configFile: 'oxlint.config.js',
+        paths: ['src', 'test'],
+      }),
+    expect: ['-c', 'oxlint.config.js', 'src', 'test'],
+    info: 'buildOxlintArgs includes positional paths after config',
+  },
+
   // Test run.js getOxlintBin with MAGIC_LINT_OXLINT_BIN env override
   {
     fn: () => {

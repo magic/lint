@@ -16,10 +16,10 @@ export const getOxlintBin = () =>
 
 /**
  * Builds the oxlint cli argument list from parsed arguments
- * @param {{configFile?: string, args?: Record<string, string | string[]>}} params
+ * @param {{configFile?: string, paths?: string[], args?: Record<string, string | string[]>}} params
  * @returns {string[]}
  */
-export const buildOxlintArgs = ({ configFile, args = {} } = {}) => {
+export const buildOxlintArgs = ({ configFile, paths, args = {} } = {}) => {
   const oxlintArgs = []
 
   if (is.arr(args.exclude)) {
@@ -33,6 +33,12 @@ export const buildOxlintArgs = ({ configFile, args = {} } = {}) => {
   }
 
   oxlintArgs.push('-c', configFile)
+
+  if (is.arr(paths)) {
+    paths.forEach(arg => {
+      oxlintArgs.push(arg)
+    })
+  }
 
   if (is.arr(args.include)) {
     args.include.forEach(arg => {

@@ -1,9 +1,11 @@
 export function getOxlintBin(): string
 export function buildOxlintArgs({
   configFile,
+  paths,
   args,
 }?: {
   configFile?: string
+  paths?: string[]
   args?: Record<string, string | string[]>
 }): string[]
 export function colorEnv(

@@ -3,6 +3,8 @@ import path from 'node:path'
 
 import { fs } from '@magic/test'
 
+import { getPaths } from '../src/bin.js'
+
 const binPath = path.join(process.cwd(), 'src', 'bin.js')
 
 const fixtureDir = (name: string): string =>
@@ -48,6 +50,33 @@ const runLint = (
   })
 
 export default [
+  // getPaths: collects bare positional paths
+  {
+    fn: () => getPaths(['node', 'bin.js', 'src', 'test']),
+    expect: ['src', 'test'],
+    info: 'getPaths collects positional paths',
+  },
+
+  // getPaths: ignores the literal command token
+  {
+    fn: () => getPaths(['node', 'bin.js', 'lint']),
+    expect: [],
+    info: 'getPaths ignores the command token',
+  },
+
+  // getPaths: skips flags and the values of value-taking flags
+  {
+    fn: () => getPaths(['node', 'bin.js', 'lint', '-c', 'conf.ts', 'src']),
+    expect: ['src'],
+    info: 'getPaths skips flags and flag values',
+  },
+
+  // getPaths: skips all value flags, keeps boolean flags skipped and paths kept
+  {
+    fn: () => getPaths(['node', 'bin.js', '-e', 'docs/', '-i', 'lib/', '-f', 'src', 'test']),
+    expect: ['src', 'test'],
+    info: 'getPaths skips all value flags and their values',
+  },
   {
     fn: async () => {
       const dir = fixtureDir('clean')
@@ -119,7 +148,24 @@ export default [
       }
     },
     expect: 0,
-    info: 'integration: lint skips the literal "lint" positional arg (getPaths)',
+    info: 'integration: lint skips the literal "lint" token and forwards the remaining path (getPaths)',
+  },
+  {
+    fn: async () => {
+      const dir = fixtureDir('positional')
+      await createFixture(dir, {
+        'bad.js': 'const a = 1\n',
+        'good.js': 'const a = 1\nconsole.log(a)\n',
+      })
+      try {
+        const { code } = await runLint(dir, ['good.js'])
+        return code
+      } finally {
+        await fs.rmrf(dir)
+      }
+    },
+    expect: 0,
+    info: 'integration: lint forwards positional paths to oxlint',
   },
   {
     fn: async () => {

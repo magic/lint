@@ -1,12 +1,52 @@
 #!/usr/bin/env node
 
+import { fileURLToPath } from 'node:url'
+
 import cli from '@magic/cli'
 import fs from '@magic/fs'
 import log from '@magic/log'
 
 import { resolveConfig } from './lib/config.js'
 import { buildOxlintArgs, getOxlintBin, runOxlint } from './lib/run.js'
-import { fileURLToPath } from 'node:url'
+
+/**
+ * lint flags that consume the next argument as their value
+ * @type {string[]}
+ */
+const valueFlags = ['--config', '--conf', '-c', '--exclude', '--ignore', '-e', '--include', '-i']
+
+/**
+ * Collects bare positional path arguments from the given argv.
+ * @magic/cli drops positionals that are not the value of a known
+ * option, so the paths to lint are collected here instead.
+ * @param {string[]} [argv=process.argv]
+ * @returns {string[]}
+ */
+export const getPaths = (argv = process.argv) => {
+  /** @type {string[]} */
+  const paths = []
+
+  for (let i = 2; i < argv.length; i++) {
+    const arg = argv[i]
+
+    if (arg === 'lint') {
+      continue
+    }
+
+    if (valueFlags.includes(arg)) {
+      i++
+      continue
+    }
+
+    if (arg.startsWith('-')) {
+      continue
+    }
+
+    paths.push(arg)
+  }
+
+  return paths
+}
 
 const { args } = cli({
   options: [
@@ -37,13 +77,14 @@ lint -c conf.ts  - lint with the given config
 
 export const run = async () => {
   const cwd = process.cwd()
+  const paths = getPaths()
   const configFile = await resolveConfig(args, cwd)
-  const oxlintArgs = buildOxlintArgs({ configFile, args })
+  const oxlintArgs = buildOxlintArgs({ configFile, paths, args })
 
   if (args.verbose) {
-    // console.warn writes to stderr, so the echoed command does not
+    // log.warn writes to stderr, so the echoed command does not
     // pollute the oxlint output that callers may capture
-    console.warn(`[lint] running: ${process.execPath} ${getOxlintBin()} ${oxlintArgs.join(' ')}`)
+    log.warn(`[lint] running: ${process.execPath} ${getOxlintBin()} ${oxlintArgs.join(' ')}`)
   }
 
   const result = await runOxlint(oxlintArgs, cwd)
