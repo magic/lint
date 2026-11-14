@@ -61,8 +61,8 @@
     "@magic-modules/pre": "0.0.12",
     "@magic-themes/docs": "0.0.15",
     "@magic/core": "0.0.161",
-    "@magic/format": "0.0.78",
-    "@magic/test": "0.3.53",
+    "@magic/format": "0.0.79",
+    "@magic/test": "0.3.55",
     "@types/node": "26.6.6",
     "typescript": "npm:@typescript/typescript6"
   },
