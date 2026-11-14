@@ -270,4 +270,25 @@ export default [
     expect: true,
     info: 'integration: explicit FORCE_COLOR is passed to oxlint as FORCE_COLOR=1',
   },
+  {
+    fn: async () => {
+      const dir = fixtureDir('killed')
+      await createFixture(dir, { 'a.js': 'const a = 1\nconsole.log(a)\n' })
+      // a stand-in for oxlint that is killed by a signal after writing a
+      // marker, so the close handler sees a null exit code
+      const fakeBin = path.join(dir, 'killed-oxlint.js')
+      await fs.writeFile(
+        fakeBin,
+        'process.stdout.write("about to die\\n")\nprocess.kill(process.pid, "SIGKILL")\n',
+      )
+      try {
+        const { code, stdout } = await runLint(dir, [], { MAGIC_LINT_OXLINT_BIN: fakeBin })
+        return code === 1 && stdout.includes('about to die')
+      } finally {
+        await fs.rmrf(dir)
+      }
+    },
+    expect: true,
+    info: 'integration: lint exits 1 when oxlint is killed by a signal (close code null falls back to 1)',
+  },
 ]
