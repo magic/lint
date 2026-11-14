@@ -65,6 +65,24 @@ lint -v          - echo the oxlint command
 cli. it spawns oxlint with the resolved config and forwards its output
 and exit code.
 
+##### <a name="usage-colors"></a>colors
+
+oxlint only emits colors when its own stdout is a TTY, so piping its
+output (which `lint` always does) would lose them. `lint` therefore
+decides on color from **its own** stdout and passes the decision to
+oxlint via its environment, so `npm run lint` in a terminal shows the
+same colored output as running oxlint directly, while
+`lint | tee log.txt` stays plain.
+
+the decision respects the standard env vars, in this order of
+precedence:
+
+1. `NO_COLOR` (set and non-empty) — no colors, even in a TTY
+2. `FORCE_COLOR` (set, not `0`) — colors, even when piped
+3. `lint`'s stdout is a TTY — colors
+4. `CI` (set and non-empty) — colors, for CI logs
+5. otherwise — no colors
+
 #### <a name="usage-config"></a>configuration
 
 your project must have an `oxlint.config.ts` in its root
@@ -146,6 +164,7 @@ import {
   resolveConfig, // resolve config path given args + cwd
   getOxlintBin, // get the oxlint binary path
   runOxlint, // run oxlint with raw args
+  colorEnv, // env for oxlint color output, see colors above
   sharedConfigPath, // path to the shared config
   consumerConfigName, // 'oxlint.config.ts'
   config, // content of oxlint.config.ts
@@ -162,7 +181,15 @@ returns the path to the oxlint binary. respects `MAGIC_LINT_OXLINT_BIN`.
 
 ##### `runOxlint(oxlintArgs, cwd)`
 
-low-level: spawns oxlint with the given argv array.
+low-level: spawns oxlint with the given argv array. color is decided
+via `colorEnv()` (see [colors](#usage-colors)).
+
+##### `colorEnv(env, isTTY)`
+
+computes the env to pass to an oxlint child process for color output:
+`FORCE_COLOR=1` when color should be emitted, `NO_COLOR=1` otherwise
+(see [colors](#usage-colors)). defaults to the current process's env
+and stdout.
 
 ##### `sharedConfigPath`
 
@@ -185,7 +212,7 @@ reexport of oxlint.config.js
 
 | specifier            | provides                                                                                                                                         |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@magic/lint`        | named: `resolveConfig`, `getOxlintBin`, `runOxlint`, `sharedConfigPath`, `consumerConfigName`, `config` (shared config object)                   |
+| `@magic/lint`        | named: `resolveConfig`, `getOxlintBin`, `runOxlint`, `colorEnv`, `sharedConfigPath`, `consumerConfigName`, `config` (shared config object)       |
 | `@magic/lint/bin`    | CLI entry point (`src/bin.js`)                                                                                                                   |
 | `@magic/lint/config` | the shared oxlint config (import and re-export it from your `oxlint.config.ts`) — **mandatory** for oxlint to find and apply rules to your files |
 | `@magic/lint/types`  | TypeScript declarations                                                                                                                          |

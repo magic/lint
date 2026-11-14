@@ -42,6 +42,22 @@ lint -v          - echo the oxlint command
     ' cli. it spawns oxlint with the resolved config and forwards its output and exit code.',
   ),
 
+  h3({ id: 'usage-colors' }, 'colors'),
+
+  p(
+    'oxlint only emits colors when its own stdout is a TTY, so piping its output (which lint always does) would lose them. lint therefore decides on color from its own stdout and passes the decision to oxlint via its environment, so npm run lint in a terminal shows the same colored output as running oxlint directly, while lint | tee log.txt stays plain.',
+  ),
+
+  p('the decision respects the standard env vars, in this order of precedence:'),
+
+  ul([
+    li(strong('NO_COLOR') + ' (set and non-empty) — no colors, even in a TTY'),
+    li(strong('FORCE_COLOR') + ' (set, not 0) — colors, even when piped'),
+    li("lint's stdout is a TTY — colors"),
+    li(strong('CI') + ' (set and non-empty) — colors, for CI logs'),
+    li('otherwise — no colors'),
+  ]),
+
   h2({ id: 'config' }, 'configuration'),
 
   p('by default, the config shared by @magic/lint is used (src/oxlint.config.ts of this package).'),
@@ -104,6 +120,7 @@ import {
   resolveConfig,      // resolve config path given args + cwd
   getOxlintBin,       // get the oxlint binary path
   runOxlint,          // run oxlint with raw args
+  colorEnv,           // env for oxlint color output, see colors above
   sharedConfigPath,   // path to the shared config
   consumerConfigName, // 'oxlint.config.ts'
   config,             // the shared oxlint config object
@@ -111,7 +128,15 @@ import {
 
   h3({ id: 'runoxlint' }, 'runOxlint(oxlintArgs, cwd)'),
 
-  p('low-level: spawns oxlint with the given argv array. returns { code, stdout, stderr }.'),
+  p(
+    'low-level: spawns oxlint with the given argv array. color is decided via colorEnv(). returns { code, stdout, stderr }.',
+  ),
+
+  h3({ id: 'colorenv' }, 'colorEnv(env, isTTY)'),
+
+  p(
+    "computes the env to pass to an oxlint child process for color output: FORCE_COLOR=1 when color should be emitted, NO_COLOR=1 otherwise. defaults to the current process's env and stdout.",
+  ),
 
   h3({ id: 'resolveconfig' }, 'resolveConfig(args, cwd)'),
 
@@ -138,7 +163,7 @@ import {
   ul([
     li([
       strong('@magic/lint'),
-      ' — named: resolveConfig, getOxlintBin, runOxlint, sharedConfigPath, consumerConfigName, config',
+      ' — named: resolveConfig, getOxlintBin, runOxlint, colorEnv, sharedConfigPath, consumerConfigName, config',
     ]),
     li([strong('@magic/lint/bin'), ' — CLI entry point']),
     li([
