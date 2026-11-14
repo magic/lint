@@ -44,6 +44,40 @@ export const buildOxlintArgs = ({ configFile, args = {} } = { args: {} }) => {
 }
 
 /**
+ * oxlint decides whether to emit colors from its own stdout being a TTY
+ * (plus the CI / FORCE_COLOR env). Since we always pipe it, its TTY check
+ * would always be false and the colors would be lost.
+ *
+ * Instead, we base the decision on this process's stdout — what the user
+ * actually sees — and pass the decision to oxlint via its env.
+ *
+ * Precedence: NO_COLOR > FORCE_COLOR > stdout is a TTY > CI
+ * @param {Record<string, string | undefined>} [env]
+ * @param {boolean} [isTTY]
+ * @returns {Record<string, string | undefined>} the env to pass to the oxlint child process
+ */
+export const colorEnv = (env = process.env, isTTY = Boolean(process.stdout.isTTY)) => {
+  const child = { ...env }
+
+  const set = v => v !== undefined && v !== ''
+  const color =
+    !set(child.NO_COLOR) &&
+    ((set(child.FORCE_COLOR) && child.FORCE_COLOR !== '0') || isTTY || set(child.CI))
+
+  if (color) {
+    child.FORCE_COLOR = '1'
+    delete child.NO_COLOR
+    delete child.CI
+  } else {
+    delete child.FORCE_COLOR
+    delete child.CI
+    child.NO_COLOR = '1'
+  }
+
+  return child
+}
+
+/**
  * Runs oxlint with the given arguments
  * @param {string[]} oxlintArgs
  * @param {string} cwd
@@ -54,6 +88,11 @@ export const runOxlint = (oxlintArgs, cwd) =>
     const child = spawn(process.execPath, [getOxlintBin(), ...oxlintArgs], {
       cwd,
       stdio: ['ignore', 'pipe', 'pipe'],
+      // oxlint's stdout is piped, so it would never detect a TTY and would
+      // drop its colors. Pass the color decision (based on our own stdout)
+      // through env instead, so `npm run lint` in a terminal stays colored
+      // while `lint | tee log.txt` stays plain.
+      env: colorEnv(),
     })
 
     /** @type {string[]} */
