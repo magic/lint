@@ -41,7 +41,9 @@ export const run = async () => {
   const oxlintArgs = buildOxlintArgs({ configFile, args })
 
   if (args.verbose) {
-    log.warn('lint', `running: ${process.execPath} ${getOxlintBin()} ${oxlintArgs.join(' ')}`)
+    // console.warn writes to stderr, so the echoed command does not
+    // pollute the oxlint output that callers may capture
+    console.warn(`[lint] running: ${process.execPath} ${getOxlintBin()} ${oxlintArgs.join(' ')}`)
   }
 
   const result = await runOxlint(oxlintArgs, cwd)
