@@ -52,7 +52,9 @@
   },
   "dependencies": {
     "@magic/cli": "0.0.55",
+    "@magic/fs": "0.0.40",
     "@magic/log": "0.1.23",
+    "@magic/types": "0.1.40",
     "oxlint": "1.93.0"
   },
   "devDependencies": {
