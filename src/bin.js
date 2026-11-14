@@ -103,15 +103,15 @@ export const run = async () => {
 // only run when executed directly, not when imported (e.g. by tests).
 // argv[1] may be a symlink (node_modules/.bin/f) while import.meta.url is the
 // real file, so both sides must be compared by realpath.
+//
+// no try/catch around run(): it cannot reject (runOxlint resolves even on
+// spawn failures), and if it ever did, letting the unhandled rejection kill
+// the process with a full stack trace is more useful than a formatted
+// one-liner.
 const isMain =
   process.argv[1] && fs.realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)
 
 if (isMain) {
-  try {
-    const result = await run()
-    process.exit(result.code ?? 0)
-  } catch (error) {
-    log.error(error)
-    process.exit(1)
-  }
+  const result = await run()
+  process.exit(result.code)
 }
