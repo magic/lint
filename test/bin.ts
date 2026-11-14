@@ -186,6 +186,23 @@ export default [
   },
   {
     fn: async () => {
+      const dir = fixtureDir('consumer-config')
+      await createFixture(dir, {
+        'a.js': 'const a = 1\nconsole.log(a)\n',
+        'oxlint.config.ts': 'export default {}\n',
+      })
+      try {
+        const { code, stderr } = await runLint(dir, ['-v'])
+        return code === 0 && stderr.includes(path.join(dir, 'oxlint.config.ts'))
+      } finally {
+        await fs.rmrf(dir)
+      }
+    },
+    expect: true,
+    info: 'integration: lint uses the consumer oxlint.config.ts when present',
+  },
+  {
+    fn: async () => {
       const dir = fixtureDir('stderr')
       await createFixture(dir, { 'a.js': 'const a = 1\nconsole.log(a)\n' })
       // a stand-in for oxlint that writes to stderr and exits 1,
