@@ -32,7 +32,9 @@ export const buildOxlintArgs = ({ configFile, paths, args = {} } = {}) => {
     oxlintArgs.push('--fix')
   }
 
-  oxlintArgs.push('-c', configFile)
+  if (configFile) {
+    oxlintArgs.push('-c', configFile)
+  }
 
   if (is.arr(paths)) {
     paths.forEach(arg => {
@@ -65,6 +67,7 @@ export const buildOxlintArgs = ({ configFile, paths, args = {} } = {}) => {
 export const colorEnv = (env = process.env, isTTY = Boolean(process.stdout.isTTY)) => {
   const childEnv = { ...env }
 
+  /** @param {string | undefined} v */
   const isSet = v => v !== undefined && v !== ''
   const color =
     !isSet(childEnv.NO_COLOR) &&
