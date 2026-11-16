@@ -1,6 +1,6 @@
 {
   "name": "@magic/lint",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "lints your code using oxlint.",
   "homepage": "https://magic.github.io/lint",
   "bugs": {
