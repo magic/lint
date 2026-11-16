@@ -1,5 +1,9 @@
 ### Changelog
 
+#### 0.0.6
+
+- update dependencies
+
 #### 0.0.5
 
 - preserve oxlint colors when piping: pass the color decision (based on
