@@ -1,6 +1,7 @@
-import fs from '@magic/fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+
+import fs from '@magic/fs'
 
 /**
  * The oxlint config shared with all consumers,
